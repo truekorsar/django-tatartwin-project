@@ -1,0 +1,7 @@
+{% if form.errors %}
+<div class="row">
+    <div class="alert alert-primary" role="alert" id="errors">
+        {{ form.word.errors|linebreaksbr }}
+    </div>
+</div>
+{% endif %}

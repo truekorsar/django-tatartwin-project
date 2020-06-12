@@ -1,0 +1,78 @@
+{% extends 'layout/main_layout.html' %}
+
+{% block title %} Главная страница{% endblock %}
+{% load static %}
+{% block static_css %}
+    <link rel="stylesheet" href="{% static 'css/../../static/css/wait.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.level_tag }}" id="messages">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+{#        Основа#}
+    <div class="row">
+        <div class="jumbotron">
+              <h1 class="display-4">Добро пожаловать!</h1>
+              <p class="lead">Тут можно сравнить 2 великих языка с похожими алфавитами: русский и татарский.
+                  Просто введите любое слово ил фразу на русском и мы попытаемся найти похожее на него татарское слово или фразу (по написанию).</p>
+              <p class="lead">P.S. После входа на сайт станет доступен ввод специальных татарских символов, которых нет в русском
+                  алфавите, но есть в татарском (те что снизу).</p>
+              <hr class="my-4">
+
+                   <form action="{% url 'tatar_word_ajax' %}" method="get" id="wordform">
+                        <div class="row">
+                                <div class="col-auto">
+                                    {{ form.word }}
+                                    <div class="btn-toolbar mt-2" role="toolbar" aria-label="Toolbar with button groups">
+                                      <div class="btn-group mr-2" role="group" aria-label="First group">
+                                            <button type="button" class="btn btn-secondary">ә</button>
+                                            <button type="button" class="btn btn-secondary">җ</button>
+                                            <button type="button" class="btn btn-secondary">ө</button>
+                                            <button type="button" class="btn btn-secondary">һ</button>
+                                            <button type="button" class="btn btn-secondary">ң</button>
+                                            <button type="button" class="btn btn-secondary">ү</button>
+                                      </div>
+                                    </div>
+                                    <p> <small id="emailHelp" class="form-text text-muted">Сейчас в базе {{ num_of_words }} слов и фраз</small></p>
+                                </div>
+                                <div class="col">
+                                    <button type="submit" class="btn btn-success" id="gettatar">Найти татарского двойника</button>
+                                    <div class="btn-toolbar mt-2" role="toolbar" aria-label="Toolbar with button groups">
+                                      <div class="btn-group mr-2" role="group" aria-label="First group">
+                                            <button type="button" class="btn btn-secondary">Ә</button>
+                                            <button type="button" class="btn btn-secondary">Җ</button>
+                                            <button type="button" class="btn btn-secondary">Ө</button>
+                                            <button type="button" class="btn btn-secondary">Һ</button>
+                                            <button type="button" class="btn btn-secondary">Ң</button>
+                                            <button type="button" class="btn btn-secondary">Ү</button>
+                                      </div>
+                                    </div>
+                                </div>
+                        </div>
+                   </form>
+                </div>
+        </div>
+    <div class="container" id="tatar_errors">
+    {% include 'core/tatar_errors.html' %}
+</div>
+        </div>
+
+<div class="text-center" id="wait">
+  <img src="{% static 'images/../../static/images/wait.gif' %}" alt="" class="rounded">
+</div>
+
+<div class="container-fluid" id="tatar_info">
+    {% include 'core/tatar_info.html' %}
+</div>
+
+{% block js %}
+    <script src="{% static 'js/../../static/js/index.js' %}"></script>
+{% endblock %}
+
+{% endblock %}

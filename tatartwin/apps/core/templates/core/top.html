@@ -1,0 +1,50 @@
+{% extends 'layout/main_layout.html' %}
+
+{% load static %}
+
+{% block title %} Популярные слова {% endblock %}
+{% block static_css %}
+    <link rel="stylesheet" href="{% static 'css/../../static/css/carousel.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div id="carouselExampleIndicators" class="carousel slide text-center" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+
+  </ol>
+  <div class="carousel-inner ">
+
+      {% for top_tatar_word, times in top_tatar_words.items %}
+
+      {% if forloop.first %}
+          <div class="carousel-item active">
+      {% else %}
+          <div class="carousel-item">
+      {% endif %}
+          <img class="d-block w-100" src="{% static 'images/../../static/images/Hollowed-Boxes.svg' %}" alt="First slide">
+            <div class="carousel-caption">
+                <h1 class="heading">{{ top_tatar_word|capfirst }}</h1>
+                <p class="subheading text-dark">Это слово встретилось
+                    <span class="text text-danger">{{ top_tatar_word.hit }}</span> {{ times }}!</p>
+                <a href="{% url 'show_detail' top_tatar_word.pk %}" class="btn btn-lg btn-primary mt-5">
+                    Узнать подробнее о слове "{{ top_tatar_word }}"</a>
+            </div>
+        </div>
+      {% endfor %}
+  </div>
+  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+    </div>
+{% endblock %}
