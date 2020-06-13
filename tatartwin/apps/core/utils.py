@@ -11,13 +11,13 @@ def get_tatar_twin(form):
     """
     Given a Form object, extract the initial word and get similar tatar word
 
-    When fetched, word is set in the cache (Redis) for 5 minutes and in next same request it will be found in cache
+    When fetched, word is set in the cache (Redis) for 1 minute and in next same request it will be found in cache
     """
     word = form.cleaned_data['word']
     tatar_word = cache.get(word)
     if not tatar_word:
         tatar_word = Tatar.objects.find_twin(word)
-        cache.set(word, tatar_word, 300)
+        cache.set(word, tatar_word, 60)
     tatar_word.hit_increment()
     return word, tatar_word
 
