@@ -12,18 +12,14 @@ from .utils import *
 def index(request):
     """ Renders main page and handles user's word requests"""
     context = {'num_of_words': Tatar.objects.count()}
-    if request.GET:
-        form = WordForm(request.GET, is_authenticated=request.user.is_authenticated)
-        context.update({'form': form})
-        if form.is_valid():
-            word, tatar_word = get_tatar_twin(form)
-            context.update({'tatar_word': tatar_word})
-            response = render(request, 'core/index.html', context)
-            set_entry(request, tatar_word, word, response)
-            return response
-    else:
-        form = WordForm()
-        context.update({'form': form})
+    form = WordForm(request.GET or None, is_authenticated=request.user.is_authenticated)
+    context.update({'form': form})
+    if form.is_valid():
+        word, tatar_word = get_tatar_twin(form)
+        context.update({'tatar_word': tatar_word})
+        response = render(request, 'core/index.html', context)
+        set_entry(request, tatar_word, word, response)
+        return response
     return render(request, 'core/index.html', context)
 
 

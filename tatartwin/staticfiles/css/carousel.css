@@ -1,0 +1,15 @@
+html,
+body,
+.carousel,
+.carousel-inner,
+.carousel-inner.item{
+    height: 100vh;
+}
+.carousel-caption{
+    top:15%;
+    bottom: auto;
+}
+
+
+
+

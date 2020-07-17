@@ -6,7 +6,7 @@ from django import forms
 
 class TatarSetPasswordForm(SetPasswordForm):
     error_messages = {
-        'password_mismatch': 'Пароли не совпадают',  # For some reason, 'password_mismatch' error is not translated
+        'password_mismatch': 'Пароли не совпадают',
     }
 
 

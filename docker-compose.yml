@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:12
+    restart: always
+    env_file:
+      - ./docker-setup-project/db/dbenv.env
+    volumes:
+      - ~/data_ps/:/var/lib/postgresql/data/
+      - ./docker-setup-project/db/postgres_config.conf:/etc/db.conf
+    expose:
+      - "5432"
+    command: postgres -c config_file=/etc/db.conf
+  nginx:
+    image: nginx:latest
+    volumes:
+    - ./docker-setup-project/nginx:/etc/nginx/templates
+    - ./tatartwin/staticfiles:/usr/local/src/project/tatartwin/staticfiles
+    ports:
+    - "80:80"
+    env_file:
+      - ./docker-setup-project/nginx/nginx.env
+    depends_on:
+      - web
+
+  web:
+    build: .
+    volumes:
+      - ./:/usr/local/src/project/
+    expose:
+      - "8000"
+    depends_on:
+      - db
+      - redis
+      - memcached
+    env_file:
+      - tatartwin/tatartwin/settings.env
+  redis:
+    image: redis:6.0.5
+    expose:
+      - "6379"
+  memcached:
+    image: memcached:1.6.6
+    expose:
+      - "11211"

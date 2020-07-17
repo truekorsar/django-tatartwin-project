@@ -3,7 +3,6 @@
     <div class="alert alert-success" role="alert" id="description">
         <a href="{% url 'show_detail' tatar_word.pk%}"><button type="button" class="btn btn-primary btn-lg btn-block">{{ tatar_word|capfirst }}</button></a>
         <ol class="pl-2">
-            <a name="description"></a>
             {% for translation in tatar_word.translations.all %}
                 <li>{{ translation }}</li>
                 {% for example in translation.examples.all %}

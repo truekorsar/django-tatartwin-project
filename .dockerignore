@@ -1,0 +1,6 @@
+venv/
+activation_status.log
+celerybeat.log
+celeryd.log
+LICENSE
+README.md

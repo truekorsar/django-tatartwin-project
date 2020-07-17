@@ -7,7 +7,6 @@ Main models are following:
     2. Translations - Translation of the particular tatar word
     3. Examples - Translation usage examples
 
-Another model History is for storing authorized users' results of inputs
 """
 
 from django.db import models
@@ -16,7 +15,7 @@ from django.db.models import F
 
 
 class TatarManager(models.Manager):
-    # Long query string for fetching alike tatar word, referred here as a 'twin'
+    # Long query string for fetching similar tatar word, referred here as a 'twin'
     TWIN_QUERY_STRING = """
                    SELECT *, word <-> %s AS dist
                    FROM (
@@ -61,6 +60,15 @@ class HistoryManager(models.Manager):
         super().create(user=user, tatar=tatar_word, word=word)
 
 
+class CommentManager(models.Manager):
+    MAX_PER_WORD = 10
+
+    def create(self, user, word, comment):
+        if word.comments.count() == self.MAX_PER_WORD:
+            word.comments.first().delete()
+        super().create(user=user, word=word, comment=comment)
+
+
 class Tatar(models.Model):
     # Actual word
     word = models.TextField(unique=True, verbose_name="Татарское слово")
@@ -83,9 +91,10 @@ class Tatar(models.Model):
         self.save()
 
 
-class Translations(models.Model):
+class Translation(models.Model):
     # Tatar word to which translation is related
-    tatar = models.ForeignKey(Tatar, models.CASCADE, blank=True, null=True, related_name='translations',
+    tatar = models.ForeignKey(Tatar, models.CASCADE, blank=True,
+                              null=True, related_name='translations',
                               verbose_name='Татарское слово')
     # Actual translation
     translation = models.TextField(blank=True, null=True, verbose_name="Перевод")
@@ -99,9 +108,10 @@ class Translations(models.Model):
         return self.translation
 
 
-class Examples(models.Model):
+class Example(models.Model):
     # Translation to which example is related
-    trans = models.ForeignKey(Translations, models.CASCADE, blank=True, null=True, related_name='examples',
+    trans = models.ForeignKey(Translation, models.CASCADE, blank=True,
+                              null=True, related_name='examples',
                               verbose_name='Пример')
     # Actual example
     example = models.TextField(blank=True, null=True)
@@ -116,13 +126,14 @@ class Examples(models.Model):
 
 
 class History(models.Model):
-    """Connects users and tatar words in a single entry"""
+    """for storing authorized users' results of inputs"""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              verbose_name='Юзер', related_name='entries')
     tatar = models.ForeignKey(Tatar, on_delete=models.CASCADE,
                               verbose_name='Татарское слово', related_name='entries')
     word = models.TextField(verbose_name="Введенное слово")
-    hit_timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Введено')
+    hit_timestamp = models.DateTimeField(auto_now_add=True,
+                                         verbose_name='Введено')
 
     class Meta:
         verbose_name = 'История'
@@ -135,6 +146,25 @@ class History(models.Model):
         return f'{self.word}: {self.hit_timestamp}'
 
 
+class Comment(models.Model):
+    """for storing users' comments"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                             verbose_name='Юзер', related_name='comments')
+    comment = models.TextField(verbose_name='Комментарий')
+    word = models.ForeignKey(Tatar, on_delete=models.CASCADE,
+                             verbose_name='Слово', related_name='comments')
+    sent_timestamp = models.DateTimeField(auto_now_add=True,
+                                          verbose_name='Оставлено')
+
+    class Meta:
+        verbose_name = 'История'
+        verbose_name_plural = 'История'
+        ordering = ['sent_timestamp']
+
+    objects = CommentManager()
+
+    def __str__(self):
+        return f'{self.comment}: {self.sent_timestamp}'
 
 
 

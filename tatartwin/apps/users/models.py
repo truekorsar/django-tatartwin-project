@@ -11,3 +11,7 @@ class TatarUser(AbstractUser):
     class Meta:
         db_table = 'auth_user'
 
+
+
+
+

@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.sites.shortcuts import get_current_site
@@ -16,6 +17,8 @@ from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import *
 from .models import TatarUser
+
+activation_logger = logging.getLogger('activation')
 
 
 class TatarPasswordResetView(PasswordResetView):
@@ -61,7 +64,6 @@ def register(request):
         form = TatarRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-
             token = TokenGenerator().make_token(user)
             current_site = get_current_site(request)
             email_subject = 'Активация аккаунта'
@@ -87,10 +89,13 @@ def activate(request, uid, token):
             user.is_active = True
             user.save()
             success(request, "Теперь вы можете войти в свой аккаунт!")
+            activation_logger.info('Registered!')
         else:
             warning(request, "Ссылка не валидна!")
+            activation_logger.warning('Link invalid!')
     except (UnicodeDecodeError, ObjectDoesNotExist, ValueError, TypeError):
         warning(request, "Активация не удалась! Попробуйте зарегистрироваться снова.")
+        activation_logger.exception('Activation failed!')
     finally:
         return redirect('home')
 

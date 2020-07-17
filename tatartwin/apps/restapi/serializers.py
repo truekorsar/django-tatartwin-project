@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from apps.core.models import Tatar, Translations
+from apps.core.models import Tatar, Translation
 from django.core.validators import RegexValidator
 
 
@@ -15,7 +15,7 @@ class TranslationSerializer(serializers.ModelSerializer):
     examples = serializers.StringRelatedField(many=True)
 
     class Meta:
-        model = Translations
+        model = Translation
         fields = ('translation','examples')
 
 

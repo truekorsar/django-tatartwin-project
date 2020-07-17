@@ -1,5 +1,5 @@
 """
-Functions for working with history entries and fetching tatar words
+Functions for handling with history entries and fetching tatar words
 """
 from django.utils import timezone
 from .models import Tatar, History

@@ -1,15 +1,18 @@
 from __future__ import absolute_import, unicode_literals
-from celery.task import periodic_task
 from celery.schedules import crontab
-from django.utils import timezone
-from datetime import timedelta
 from .models import TatarUser
+from tatartwin import celery_app
 
 
-@periodic_task(run_every=crontab(minute='*/1'), name='delete_inactive_users')
+@celery_app.on_after_finalize.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(crontab(hour=3, minute=0),
+                             delete_inactive_users.s(), name='delete inactive users')
+
+
+@celery_app.task
 def delete_inactive_users():
-    now = timezone.now()
-    TatarUser.objects.filter(is_active=False, date_joined__lte=now-timedelta(minutes=30)).delete()
+    TatarUser.objects.filter(is_active=False).delete()
 
 
 
