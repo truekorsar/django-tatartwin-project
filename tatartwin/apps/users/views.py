@@ -52,6 +52,10 @@ class TatarLoginView(LoginView):
     template_name = 'users/auth/login.html'
     authentication_form = TatarLoginForm
 
+    def form_valid(self, form):
+        success(self.request, 'Вы вошли!')
+        return super().form_valid(form)
+
 
 class TatarLogoutView(LogoutView):
     pass

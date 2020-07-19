@@ -172,5 +172,5 @@ LOGGING = {
         },
     },
 }
-DEBUG = bool(os.environ['DEBUG'])
+DEBUG = bool(int(os.environ['DEBUG']))
 ALLOWED_HOSTS = [os.environ['ALLOWED_HOST']]
