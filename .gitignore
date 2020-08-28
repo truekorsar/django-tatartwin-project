@@ -93,3 +93,7 @@ venv.bak/
 
 .idea/
 default.conf.template
+staticfiles
+robots.txt
+sitemap.xml
+data_ps/

@@ -1,6 +1,8 @@
 const MAX_LENGTH = 200
 
 let detail_uri = window.location.href
+let protocol = detail_uri.slice(0, detail_uri.indexOf(':'))
+let WSPrefix = protocol[protocol.length-1] === 's' ? 's' : ''
 let room_name = detail_uri.slice(detail_uri.lastIndexOf('/')+1)
 let message_input = $('#chat-message-input')
 let message_submit = $('#chat-message-submit')
@@ -14,7 +16,7 @@ message_input.attr('maxlength', MAX_LENGTH)
 chat_log.val('')
 
 let chatSocket = new WebSocket(
-    'ws://'
+    'ws' + WSPrefix + '://'
     + window.location.host
     + '/ws/chat/'
     + room_name

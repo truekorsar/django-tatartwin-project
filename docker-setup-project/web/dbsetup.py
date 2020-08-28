@@ -3,9 +3,9 @@ import sys
 import subprocess
 import psycopg2
 
-with psycopg2.connect(dbname=os.environ['POSTGRES_DB_NAME'],
-                      user=os.environ['PROJECT_USER'],
-                      password=os.environ['PROJECT_USER_PASSWORD'],
+with psycopg2.connect(dbname=os.environ['POSTGRES_DB'],
+                      user=os.environ['POSTGRES_USER'],
+                      password=os.environ['POSTGRES_PASSWORD'],
                       host=os.environ['POSTGRES_HOST']) as conn:
     conn.autocommit = True
     cursor = conn.cursor()
