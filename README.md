@@ -21,7 +21,8 @@ git clone https://github.com/truekorsar/django-tatartwin-project.git
 ```
 cd ./django-tatartwin-project
 ```
-##### 4. Prepare files for docker containers
+
+##### 4. Prepare config files for docker containers, delete .example extensions
 In order for project to work via docker, there are 5 services declared in docker-compose.yml:
 1. db-Postgres database
 2. nginx - web server
@@ -64,7 +65,19 @@ like _`SOCIAL_AUTH_VK_OAUTH2_KEY`_ or _`EMAIL_HOST_USER`_ are responsible for th
 so unless you define your own values, this part of project will not work properly. Again, as described above, if it's not a problem
 just delete .example extension and go to the next step. 
 
-##### 5. Build containers and start them
+##### 5. Collect all static files for nginx container
+For proper display of images and stylesheets you have to collect them into staticfiles folder.
+But before that you have to change directory permissions and install virtual environment   
+```
+sudo chmod -R ugo+wrx .
+python3.8 -m venv venv
+source ./venv/bin/activate
+pip install -r requirements.txt
+export $(grep -v '^#' ./tatartwin/tatartwin/settings.env | xargs -d '\n')
+python ./tatartwin/manage.py collectstatic
+```
+
+##### 6. Build containers and start them
 ```
 sudo docker-compose up
 ```
