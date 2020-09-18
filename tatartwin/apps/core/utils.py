@@ -1,13 +1,17 @@
 """
-Functions for handling with history entries and fetching tatar words
+Functions for working with history entries and fetching tatar words
 """
 from django.utils import timezone
-from .models import Tatar, History
 from django.core.cache import cache
 from django_redis import get_redis_connection
 
+from .models import Tatar, History
+from .forms import WordForm
 
-def get_tatar_twin(form):
+from typing import Tuple
+
+
+def get_tatar_twin(form: WordForm) -> Tuple[str, Tatar]:
     """
     Given a Form object, extract the initial word and get similar tatar word
 
@@ -22,7 +26,7 @@ def get_tatar_twin(form):
     return word, tatar_word
 
 
-def set_entry(request, tatar_word, word, response):
+def set_entry(request, tatar_word: Tatar, word: str, response) -> None:
     """
     Given a tatar word and initial word, set the history entry
 
@@ -41,7 +45,6 @@ def set_entry(request, tatar_word, word, response):
     if request.user.is_authenticated:
         History.objects.create(user=request.user, tatar_word=tatar_word, word=word)
     else:
-
         now = timezone.now()
         first_accessed = request.COOKIES.get('first_accessed', str(now))
         response.set_cookie('first_accessed', first_accessed)
@@ -68,5 +71,5 @@ def get_all_entries(request):
             timestamp_key = decoded_key[decoded_key.find(':', 1)+1:]
             pairs.append(cache.get(timestamp_key))
         pairs.sort(key=lambda i: i[2], reverse=True)  # sort by date
-        pairs = list(map(lambda i: i[:-1], pairs))  # remove data info from pairs list
+        pairs = list(map(lambda i: i[:-1], pairs))  # remove date info from pairs list
     return pairs

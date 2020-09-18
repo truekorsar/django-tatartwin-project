@@ -30,7 +30,7 @@
             <div class="carousel-caption">
                 <h1 class="heading">{{ top_tatar_word|capfirst }}</h1>
                 <p class="subheading text-dark">Это слово встретилось
-                    <span class="text text-danger">{{ top_tatar_word.hit }}</span> {{ times }}!</p>
+                    <span class="text text-danger" id="num_of_hits">{{ top_tatar_word.hit }}</span> {{ times }}!</p>
                 <a href="{% url 'show_detail' top_tatar_word.pk %}" class="btn btn-lg btn-primary mt-5">
                     Узнать подробнее о слове "{{ top_tatar_word }}"</a>
             </div>

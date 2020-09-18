@@ -5,15 +5,13 @@ from django.views.generic.list import ListView
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from pymorphy2 import MorphAnalyzer
-from .forms import WordForm
 from .utils import *
 
 
 def index(request):
     """ Renders main page and handles user's word requests"""
-    context = {'num_of_words': Tatar.objects.count()}
     form = WordForm(request.GET or None, is_authenticated=request.user.is_authenticated)
-    context.update({'form': form})
+    context = {'form': form, 'num_of_words': Tatar.objects.count()}
     if form.is_valid():
         word, tatar_word = get_tatar_twin(form)
         context.update({'tatar_word': tatar_word})

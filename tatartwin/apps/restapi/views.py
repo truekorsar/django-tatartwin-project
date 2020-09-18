@@ -1,35 +1,34 @@
-from django.shortcuts import render
-from django.contrib.sites.shortcuts import get_current_site
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
 from rest_framework.views import APIView
+from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TatarSerializer, TatarFullSerializer, WordErrorCheckSerializer
+from .serializers import TatarSerializer, TatarFullSerializer
 from apps.core.models import Tatar
 
 
-def check_error(func):
-    def wrapper(*args, **kwargs):
-        error_checker = WordErrorCheckSerializer(data={'error': kwargs['word']})
-        if not error_checker.is_valid():
-            return Response(error_checker.errors, status=status.HTTP_400_BAD_REQUEST)
-        return func(*args, **kwargs)
-    return wrapper
-
-
 class TatarRetrieveAPI(APIView):
-    @check_error
+    serializer_class = TatarSerializer
+
     def get(self, request, word):
-        tatar = Tatar.objects.find_twin(word)
-        tatar_serializer = TatarSerializer(tatar)
-        return Response(tatar_serializer.data)
+        tatar_serializer = self.serializer_class(data={'word': word}, is_authenticated=request.user.is_authenticated)
+        if tatar_serializer.is_valid():
+            tatar = Tatar.objects.find_twin(word)
+            serialized_data = self.serializer_class(tatar).data
+            return Response(serialized_data)
+        else:
+            return Response(tatar_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TatarFullRetrieveAPI(APIView):
-    @check_error
-    def get(self, request, word):
-        tatar = Tatar.objects.find_twin(word)
-        tatar_serializer = TatarFullSerializer(tatar)
-        return Response(tatar_serializer.data)
+class TatarFullRetrieveAPI(TatarRetrieveAPI):
+    serializer_class = TatarFullSerializer
+
+
+class TatarCreateAPI(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Tatar.objects.all()
+    serializer_class = TatarFullSerializer
 
 
 class TatarTopAPI(APIView):
@@ -39,9 +38,13 @@ class TatarTopAPI(APIView):
         return Response(tatar_serializer.data)
 
 
-def api_spec(request):
-    domain = get_current_site(request).domain
-    return render(request, 'restapi/specification.html', {'domain': domain})
-
+@api_view(['GET'])
+def api_spec(request, format=None):
+    return Response({
+        'Найти татарское слово (пример)': reverse('twin', request=request, format=format, args=['пример']),
+        'Найти татарское слово с полным описанием (пример)': reverse('twin_full', request=request, format=format, args=['пример']),
+        'Найти топ N слов': reverse('top', request=request, format=format, args=[3]),
+        'Создать татарское слово': reverse('create', request=request, format=format)
+    })
 
 

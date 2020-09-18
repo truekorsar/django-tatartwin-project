@@ -172,5 +172,13 @@ LOGGING = {
         },
     },
 }
-DEBUG = bool(int(os.environ['DEBUG']))
+DEBUG = int(os.environ['DEBUG'])
 ALLOWED_HOSTS = [os.environ['ALLOWED_HOST']]
+
+GECKODRIVER_PATH = os.path.join(BASE_DIR, 'geckodriver')  # For selenium tests
+FIXTURE_DIRS = [os.path.join(os.path.join(BASE_DIR, 'tests'), 'fixtures')]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}

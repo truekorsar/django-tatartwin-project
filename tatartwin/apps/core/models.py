@@ -110,9 +110,9 @@ class Translation(models.Model):
 
 class Example(models.Model):
     # Translation to which example is related
-    trans = models.ForeignKey(Translation, models.CASCADE, blank=True,
-                              null=True, related_name='examples',
-                              verbose_name='Пример')
+    translation = models.ForeignKey(Translation, models.CASCADE, blank=True,
+                                    null=True, related_name='examples',
+                                    verbose_name='Пример')
     # Actual example
     example = models.TextField(blank=True, null=True)
 
