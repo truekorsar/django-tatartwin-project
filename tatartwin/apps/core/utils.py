@@ -18,10 +18,8 @@ def get_tatar_twin(form: WordForm) -> Tuple[str, Tatar]:
     When fetched, word is set in the cache (Redis) for 1 minute and in next same request it will be found in cache
     """
     word = form.cleaned_data['word']
-    tatar_word = cache.get(word)
-    if not tatar_word:
-        tatar_word = Tatar.objects.find_twin(word)
-        cache.set(word, tatar_word, 60)
+    tatar_word = cache.get(word) or Tatar.objects.find_twin(word)
+    cache.set(word, tatar_word, 60)
     tatar_word.hit_increment()
     return word, tatar_word
 
