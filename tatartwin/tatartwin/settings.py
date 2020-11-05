@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'captcha',
     'djcelery_email',
     'channels',
+    'graphene_django'
 ]
 
 MIDDLEWARE = [
